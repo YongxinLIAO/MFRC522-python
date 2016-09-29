@@ -111,8 +111,19 @@ def updating_positions(a):
                 MIFAREReader.MFRC522_StopCrypto1()
             else:
                     print "Authentication error"
-
-            continue_reading=input("Do you want to raed a RFID Tag? (True or False)")
+            time.sleep(1)
+            print "5"
+            time.sleep(1)
+            print "4"
+            time.sleep(1)
+            print "3"
+            time.sleep(1)
+            print "2"
+            time.sleep(1)
+            print "1"
+            print "Ready"
+            # continue_reading=input("Do you want to raed a RFID Tag? (True or False)")
+            continue_reading = True
             value4   = [0]
             context[slave_id].setValues(register, address3, value4)
             print "Ready to Move "+ str(value4)
