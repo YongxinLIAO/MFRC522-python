@@ -287,7 +287,7 @@ class MFRC522:
     (status, backData, backLen) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE, buf)
     
     if (status == self.MI_OK) and (backLen == 0x18):
-      print "Size: " + str(backData[0])
+      #print "Size: " + str(backData[0])
       return    backData[0]
     else:
       return 0
@@ -338,9 +338,42 @@ class MFRC522:
     (status, backData, backLen) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE, recvData)
     if not(status == self.MI_OK):
       print "Error while reading!"
-    i = 0
+    i=0
+    sector = int(blockAddr/4)
+    block = blockAddr - sector*4
+    print16Data=[]
     if len(backData) == 16:
-      print "Sector "+str(blockAddr)+" "+str(backData)
+      for i in range (0,16):
+        if len(str(backData[i]))== 1:
+          print16Data.append(str("0")+str(hex(backData[i]))[2:])
+        else:
+          print16Data.append(str(hex(backData[i]))[2:])
+      print "S "+str(sector)+ " B"+ str(block)+" "+ str(print16Data)
+
+  def MFRC522_ReturnValue(self, blockAddr):
+    recvData = []
+    recvData.append(self.PICC_READ)
+    recvData.append(blockAddr)
+    pOut = self.CalulateCRC(recvData)
+    recvData.append(pOut[0])
+    recvData.append(pOut[1])
+    (status, backData, backLen) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE, recvData)
+    if not(status == self.MI_OK):
+      print "Error while reading!"
+    i=0
+    sector = int(blockAddr/4)
+    block = blockAddr - sector*4
+    print16Data=[]
+    print16DataReal=[]
+    if len(backData) == 16:
+      for i in range (0,16):
+        if len(str(backData[i]))== 1:
+          print16Data.append(str("0")+str(hex(backData[i]))[2:])
+          print16DataReal.append(hex(backData[i]))
+        else:
+          print16Data.append(str(hex(backData[i]))[2:])
+          print16DataReal.append(hex(backData[i]))
+      print "S "+str(sector)+ " B"+ str(block)+" "+ str(print16Data)
     return backData
   
   def MFRC522_Write(self, blockAddr, writeData):
@@ -354,7 +387,7 @@ class MFRC522:
     if not(status == self.MI_OK) or not(backLen == 4) or not((backData[0] & 0x0F) == 0x0A):
         status = self.MI_ERR
     
-    print str(backLen)+" backdata &0x0F == 0x0A "+str(backData[0]&0x0F)
+    #print str(backLen)+" backdata &0x0F == 0x0A "+str(backData[0]&0x0F)
     if status == self.MI_OK:
         i = 0
         buf = []
